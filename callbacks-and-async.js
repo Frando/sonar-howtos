@@ -39,7 +39,7 @@ function indexReadme (cb) {
   fs.readFile('README', (err, buf) => {
     if (err) return cb(err)
     const text = buf.toString()
-    indexer.add(text)
+    addToIndex(text)
       .then(result => cb(null, result))
       .catch(err => cb(err))
   })
@@ -60,8 +60,7 @@ function indexReadme (cb) {
 function indexReadme (cb) {
   fs.readFile('README', async (err, buf) => {
     try {
-      const text = buf.toString()
-      const result = await indexer.add(text)
+      const result = await addToIndex(buf.toString())
       cb(null, result)
     } catch (err) {
       cb(err)
@@ -81,7 +80,8 @@ async function indexReadme () {
       if (err) reject(err)
       else resolve(buf)
     })
-  const result = await indexer.add(buf.toString())
+  })
+  const result = await addToIndex(buf.toString())
   return result
 }
 
@@ -90,6 +90,19 @@ async function indexReadme () {
 const { promisify } = require('util')
 async function indexReadme () {
   const buf = await promisify(fs.readFile)('README')
-  const result = await indexer.add(buf.toString())
+  const result = await addToIndex(buf.toString())
   return result
 }
+
+// I'd say: It's always cleaner to convert a callback api into a promise api
+// than it is the other way round.
+// The pattern 
+new Promise((resolve, reject) => {
+  someIoFn(foo, (err, res) => {
+    if (err) reject(err)
+    else resolve(res)
+  })
+})
+// is simple and straightforward and there's not many ways to get it wrong.
+// On the other hand, dealing with promises and callbacks in code paths that do not expect
+// promises as return values is much more error prone.
