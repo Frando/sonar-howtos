@@ -1,10 +1,35 @@
+// In Javascript, there's two common ways to deal with async IO:
+// Callbacks, and Promises
+//
+// Callbacks are older, quite simple and powerful, but can lead to
+// "callback spaghetti", where it may be harder to follow the code flow.
+// The convention is simple: Functions that perform async IO receive as their
+// last argument a "callback" or "cb" function. This function is called when
+// the async operation is done. By convention, the callback function is always
+// called with `err` as the first argument, which is either an Error object
+// or null or undefined if there was no error. The callback function may also
+// receive one or more result arguments.
+//
+// Promises are newer, and together with the async/await syntactic sugar
+// allow for a simpler, more "sync-like" codeflow. However, promises may
+// induce a performance overhead (especially when creating very many promises).
+// Due to them being newer, a lot of older NodeJS code is not based on promises
+// but on callbacks. Also, some patterns are easier to express with callbacks
+// than with promises or async/await.
+//
+// Whatever you do – this document is concerned with what you do if you have
+// to mix both patterns, so either calling async functions
+// (= function returning a Promise) from a callback, or invoke a function that
+// expects a callback from code block that does async/await otherwise.
 
+
+// We start in callback land.
+//
+// Lets say there's a foreigh async API function that does some async IO.
 async function addToIndex (text) {
   // does some IO, needs some time, and then resolves
 }
 
-// We start in callback land.
-//
 // How to call an async function from within a callback?
 //
 // 1) then/catch
